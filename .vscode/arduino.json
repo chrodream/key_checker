@@ -1,0 +1,7 @@
+{
+    "sketch": "foo.ino",
+    "board": "arduino:avr:nano",
+    "programmer": "arduino:avrisp",
+    "port": "COM1",
+    "configuration": "cpu=atmega328"
+}
