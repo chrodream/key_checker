@@ -1,17 +1,20 @@
-#include <WiFi.h>
-#include <WiFiUDP.h>
-const char ssid[] = "Sguest-5g"; // SSID
-const char pass[] = "Senkou107"; // password
+#include "./src/WiFi.h"
+#include "./src/WiFiUdp.h"
+const char ssid[] = "WARPSTAR-A358DF"; // SSID
+const char pass[] = "9F60114A033FA";   // password
 static WiFiUDP wifiUdp;
-static const char *raspberryIP = "192.168.20.206";
-static const int raspberryPort = 20206; //送信先のポート
+static const char *raspberryIP = "192.168.0.100";
+static const int raspberryPort = 2001; //送信先のポート
+
+static const int seconds = 1000;
+static const int minutes = 1000 * 60;
 
 IPAddress remoteIP; // 相手のIPアドレス
 int port;
 
 static void WiFi_setup()
 {
-  static const int kLocalPort = 7000; //自身のポート
+  static const int kLocalPort = 2000; //自身のポート
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -43,7 +46,7 @@ void loop()
 
     //パケットの送信
     wifiUdp.beginPacket(raspberryIP, raspberryPort);
-    wifiUdp.printf("ESP32Dev Bord: %d", count);
+    wifiUdp.printf("ESP32Dev Borad: %d", count);
     wifiUdp.endPacket();
 
     //パケットの受信
@@ -59,6 +62,6 @@ void loop()
       Serial.println(i); // UDP通信で来た値を表示
     }
 
-    delay(3000);
+    delay(1 * minutes);
   }
 }
