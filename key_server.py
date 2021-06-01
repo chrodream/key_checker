@@ -2,12 +2,18 @@ import os
 import sys
 import urllib.parse
 import html
+import re
+import datetime
+import csv
+import pprint
 
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from http import HTTPStatus
 
 PORT = 2001
+
+
 class StubHttpRequestHandler(BaseHTTPRequestHandler):
     server_version = "HTTP Stub/0.1"
 
@@ -27,7 +33,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<title>%s</title>\n</head>' % title)
         r.append('<body>\n<h1>%s</h1>' % title)
         r.append('<hr>\n<ul>')
-        r.append("Key status is checking")
+        r.append("Key Checker is runnig now!")
         r.append('</ul>\n<hr>\n</body>\n</html>\n')
         encoded = '\n'.join(r).encode(enc, 'surrogateescape')
 
@@ -59,7 +65,25 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(encoded)
-        # print(resultData[0])
+
+        data = re.findall(r'\d+', pan[0])  # strをリストに振り分け
+        for i in range(3):
+            data[i] = int(data[i])  # 本来数値のデータはint化
+            if data[i] <= 1:
+                if data[i] == 1:
+                    print("ON")
+                    data[i] = "ON"
+                else:
+                    print("OFF")
+                    data[i] = "OFF"
+            else:
+                print(data[i])
+
+        dt_now = datetime.datetime.now()
+        with open('./roomlog.csv', 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow([dt_now.year, dt_now.month,
+                            dt_now.day, dt_now.hour, dt_now.minute, data[0], data[1], data[2]])
 
 
 handler = StubHttpRequestHandler

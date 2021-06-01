@@ -57,7 +57,7 @@ void loop()
   Serial.println(value);
   if (client.connected() == true)
   {
-    client.write("1234123412341234");
+    client.write("210601205001");
   }
 
   delay(1 * seconds);
