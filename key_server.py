@@ -1,4 +1,5 @@
 import os
+from ssl import OPENSSL_VERSION_NUMBER
 import sys
 import urllib.parse
 import html
@@ -52,9 +53,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         rawPostData = self.rfile.read(nbytes)
         decodedPostData = rawPostData.decode(enc)
         postData = urllib.parse.parse_qs(decodedPostData)
-
-        pan = postData["205"]
-        print(pan[0])
+        print(decodedPostData)
+        pan = postData["room_num"]
+        roomnum = postData["room_num"]
+        keystat = postData["key_stat"]
+        lightstat = postData["light_stat"]
+        print(postData.items)
         resultData = []
         resultData.append(pan[0])
 
@@ -65,25 +69,15 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(encoded)
-
-        data = re.findall(r'\d+', pan[0])  # strをリストに振り分け
-        for i in range(3):
-            data[i] = int(data[i])  # 本来数値のデータはint化
-            if data[i] <= 1:
-                if data[i] == 1:
-                    print("ON")
-                    data[i] = "ON"
-                else:
-                    print("OFF")
-                    data[i] = "OFF"
-            else:
-                print(data[i])
+        print(roomnum[0])
+        print(keystat[0])
+        print(lightstat[0])
 
         dt_now = datetime.datetime.now()
         with open('./roomlog.csv', 'a') as f:
             writer = csv.writer(f)
             writer.writerow([dt_now.year, dt_now.month,
-                            dt_now.day, dt_now.hour, dt_now.minute, data[0], data[1], data[2]])
+                             dt_now.day, dt_now.hour, dt_now.minute, roomnum[0], keystat[0], lightstat[0]])
 
 
 handler = StubHttpRequestHandler
