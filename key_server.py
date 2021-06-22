@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from ssl import OPENSSL_VERSION_NUMBER
 import sys
@@ -7,13 +8,11 @@ import re
 import datetime
 import csv
 import pprint
-
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from http import HTTPStatus
-
+import tkinter
 PORT = 2001
-
 
 class StubHttpRequestHandler(BaseHTTPRequestHandler):
     server_version = "HTTP Stub/0.1"
@@ -22,6 +21,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         super().__init__(*args, **kwargs)
 
     def do_GET(self):
+        print("======================================================================")
         enc = sys.getfilesystemencoding()
         title = "Key Checker"
 
@@ -42,10 +42,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html; charset=%s" % enc)
         self.send_header("Content-Length", str(len(encoded)))
         self.end_headers()
-
         self.wfile.write(encoded)
 
+        print("======================================================================")
+
     def do_POST(self):
+        print("======================================================================")
         enc = sys.getfilesystemencoding()
 
         length = self.headers.get('content-length')
@@ -53,12 +55,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         rawPostData = self.rfile.read(nbytes)
         decodedPostData = rawPostData.decode(enc)
         postData = urllib.parse.parse_qs(decodedPostData)
-        print(decodedPostData)
+        #print(decodedPostData)
         pan = postData["room_num"]
         roomnum = postData["room_num"]
         keystat = postData["key_stat"]
         lightstat = postData["light_stat"]
-        print(postData.items)
+        #print(postData.items)
         resultData = []
         resultData.append(pan[0])
 
@@ -69,15 +71,24 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(encoded)
-        print(roomnum[0])
-        print(keystat[0])
-        print(lightstat[0])
+        print("POST data from "+roomnum[0])
+        if keystat[0] == 1:
+            print("Key  : Locked")
+        else:
+            print("Key  : Unlocked")
+        
+        if lightstat[0] == 1:
+            print("Light: ON")
+        else:
+            print("Light: OFF")
 
         dt_now = datetime.datetime.now()
         with open('./roomlog.csv', 'a') as f:
             writer = csv.writer(f)
             writer.writerow([dt_now.year, dt_now.month,
                              dt_now.day, dt_now.hour, dt_now.minute, roomnum[0], keystat[0], lightstat[0]])
+
+        print("======================================================================")
 
 
 handler = StubHttpRequestHandler

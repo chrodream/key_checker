@@ -7,7 +7,7 @@
 // Configuration
 const char ssid[] = "WARPSTAR-A358DF"; // SSID
 const char pass[] = "9F60114A033FA";   // Password
-const char serverName[] = "http://192.168.0.132:2001/";
+const char serverName[] = "http://192.168.0.100:2001/";
 static const int room_number = 205;
 
 unsigned long lastTime = 0;
@@ -21,17 +21,17 @@ static WiFiClient client;
 const int key_switch = 5;
 const int photo_tr = 12;
 
-const int red_led = 2;
-const int yellow_led = 4;
-const int white_led = 0;
-const int blue_led = 15;
+const int red_led = 2;    // WiFi cannot connect
+const int yellow_led = 4; // Posting error
+const int white_led = 0;  // Power LED
+const int blue_led = 15;  // Posting data successfully
 
 const int RED = 1;
 const int YELLOW = 2;
 const int led_level_bit = 8;
 const int led_freq = 1000;
 
-void error(int code);
+void error(int code); // When ESP occurred errors
 
 void setup()
 {
@@ -43,10 +43,8 @@ void setup()
   pinMode(white_led, OUTPUT);
   digitalWrite(white_led, HIGH);
   digitalWrite(blue_led, LOW);
-
   ledcSetup(RED, led_freq, led_level_bit);
   ledcSetup(YELLOW, led_freq, led_level_bit);
-
   ledcAttachPin(red_led, RED);
   ledcAttachPin(yellow_led, YELLOW);
 
@@ -181,6 +179,10 @@ void error(int code)
       ledcWrite(code, level);
       level--;
       delay(3);
+    }
+    if (code == 0)
+    {
+      break;
     }
   }
 }

@@ -1,7 +1,5 @@
 {
     "sketch": "client_esp.ino",
-    "board": "esp32:esp32:m5stick-c",
-    "programmer": "arduino:avrisp",
-    "port": "/dev/ttyUSB0",
-    "configuration": "PartitionScheme=default,UploadSpeed=1500000,DebugLevel=none"
+    "configuration": "PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none",
+    "board": "espressif:esp32:esp32"
 }
