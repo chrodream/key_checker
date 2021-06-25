@@ -95,6 +95,8 @@
                 "/home/chrodream/Arduino/hardware/espressif/esp32/libraries/WiFi/src",
                 "/home/chrodream/Arduino/hardware/espressif/esp32/libraries/HTTPClient/src",
                 "/home/chrodream/Arduino/hardware/espressif/esp32/libraries/WiFiClientSecure/src",
+                "/home/chrodream/Arduino/hardware/espressif/esp32/libraries/Wire/src",
+                "/home/chrodream/Arduino/libraries/ESP8266_and_ESP32_OLED_driver_for_SSD1306_displays/src",
                 "/home/chrodream/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/1.22.0-80-g6c4433a-5.2.0/xtensa-esp32-elf/include/c++/5.2.0",
                 "/home/chrodream/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/1.22.0-80-g6c4433a-5.2.0/xtensa-esp32-elf/include/c++/5.2.0/xtensa-esp32-elf",
                 "/home/chrodream/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/1.22.0-80-g6c4433a-5.2.0/xtensa-esp32-elf/include/c++/5.2.0/backward",

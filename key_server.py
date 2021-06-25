@@ -55,12 +55,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         rawPostData = self.rfile.read(nbytes)
         decodedPostData = rawPostData.decode(enc)
         postData = urllib.parse.parse_qs(decodedPostData)
-        #print(decodedPostData)
+        print(decodedPostData)
         pan = postData["room_num"]
         roomnum = postData["room_num"]
         keystat = postData["key_stat"]
         lightstat = postData["light_stat"]
-        #print(postData.items)
+        print(postData.items)
         resultData = []
         resultData.append(pan[0])
 
@@ -72,12 +72,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(encoded)
         print("POST data from "+roomnum[0])
-        if keystat[0] == 1:
+        if keystat[0] == "1":
             print("Key  : Locked")
         else:
             print("Key  : Unlocked")
         
-        if lightstat[0] == 1:
+        if lightstat[0] == "1":
             print("Light: ON")
         else:
             print("Light: OFF")

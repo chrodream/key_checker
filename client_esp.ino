@@ -3,12 +3,14 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
+#include <Wire.h>
+#include "SSD1306.h"
 
 // Configuration
 const char ssid[] = "WARPSTAR-A358DF"; // SSID
 const char pass[] = "9F60114A033FA";   // Password
 const char serverName[] = "http://192.168.0.100:2001/";
-static const int room_number = 205;
+static const int room_number = 108;
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 0;
@@ -18,7 +20,7 @@ const IPAddress dns(192, 168, 0, 1);
 const IPAddress subnet(255, 255, 255, 0);
 static WiFiClient client;
 
-const int key_switch = 5;
+const int key_switch = 35;
 const int photo_tr = 12;
 
 const int red_led = 2;    // WiFi cannot connect
@@ -30,6 +32,8 @@ const int RED = 1;
 const int YELLOW = 2;
 const int led_level_bit = 8;
 const int led_freq = 1000;
+
+SSD1306 display(0x3c, 26, 27);
 
 void error(int code); // When ESP occurred errors
 
@@ -68,31 +72,53 @@ void setup()
   Serial.println("WiFi Connected");
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
+
+  display.init();
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(0, 0, "Connected");
+  display.drawString(0, 10, WiFi.localIP().toString());
+  display.setFont(ArialMT_Plain_24);
+  display.drawString(0, 20, "Room");
+  display.drawString(70, 20, (String)room_number);
+  display.display();
 }
 
 void loop()
 {
-  //Check Key status and Light status
   std::string key_stat;
-  if (digitalRead(key_switch) == 1)
-  {
-    key_stat = "1";
-  }
-  else
-  {
-    key_stat = "0";
-  }
-
   std::string light_stat;
-  if (digitalRead(photo_tr) == 1)
+  //Check Key status and Light status
+  for (int loop_count = 0; loop_count < 100; loop_count++)
   {
-    light_stat = "1";
-  }
-  else
-  {
-    light_stat = "0";
-  }
+    if (digitalRead(key_switch) == HIGH)
+    {
+      key_stat = "1";
+      display.setFont(ArialMT_Plain_16);
+      display.drawString(0, 45, "Key");
+    }
+    else
+    {
+      key_stat = "0";
+      display.clear();
+    }
+    if (digitalRead(photo_tr) == HIGH)
+    {
+      light_stat = "1";
+    }
+    else
+    {
+      light_stat = "0";
+    }
 
+    display.setFont(ArialMT_Plain_10);
+    display.drawString(0, 0, "Connected");
+    display.drawString(0, 10, WiFi.localIP().toString());
+    display.setFont(ArialMT_Plain_24);
+    display.drawString(0, 20, "Room");
+    display.drawString(70, 20, (String)room_number);
+    display.display();
+    delay(100);
+  }
   // make send text
   std::ostringstream room_number_ostring;
   room_number_ostring << room_number;
@@ -102,11 +128,11 @@ void loop()
   send_std_string.append(key_stat);
   send_std_string.append("&light_stat=");
   send_std_string.append(light_stat);
-
   // convert from std::string to char arry
   int send_std_string_count = send_std_string.length();
   char sendtext[send_std_string_count + 1];
   strcpy(sendtext, send_std_string.c_str());
+  Serial.println(sendtext);
 
   // Send data to Server over Wi-Fi
   if (WiFi.status() == WL_CONNECTED) // Check WiFi connection status
@@ -123,7 +149,7 @@ void loop()
       String response = http.getString(); //Get the response to the request
       Serial.println(httpResponseCode);   //Print return code
       Serial.println(response);           //Print request answer
-      if (response == "200")
+      if (httpResponseCode >= 100 && httpResponseCode <= 299)
       {
         digitalWrite(blue_led, HIGH);
         delay(200);
@@ -131,18 +157,15 @@ void loop()
       }
       else
       {
-        ledcWrite(YELLOW, 255);
-        delay(200);
-        ledcWrite(YELLOW, 0);
+        error(httpResponseCode);
       }
     }
     else
     {
       Serial.print("Error on sending POST: ");
       Serial.println(httpResponseCode);
-      error(2);
+      error(httpResponseCode);
     }
-
     http.end(); //Free resources
   }
   else
@@ -150,39 +173,87 @@ void loop()
     Serial.println("Error in WiFi connection");
     error(1);
   }
-
-  delay(10000); //Send a request every 10 seconds
 }
 
 void error(int code)
 {
   digitalWrite(white_led, LOW);
+  display.clear();
+  display.setFont(ArialMT_Plain_16);
+  int rep, lap = 0;
+  if (code >= 100)
+  {
+    rep = code;
+    code = 2;
+  }
   int level = 0;
   while (1)
   {
+    lap++;
     while (1)
     {
-      if (level > 255)
+      if (level > 250)
       {
+        level = 250;
         break;
       }
       ledcWrite(code, level);
       level++;
+      display.drawString(0, 0, "Error code");
+      display.drawString(80, 0, (String)code);
+      if (code == 1)
+      {
+        display.drawString(0, 20, "No Wi-Fi");
+        display.drawString(0, 40, "connection");
+      }
+      else if (code == 2)
+      {
+        display.drawString(0, 20, "Reqest Error");
+        display.drawString(0, 40, "Code: ");
+        display.drawString(50, 40, (String)rep);
+      }
+      else if (code == -1)
+      {
+        display.drawString(0, 20, "No Reply");
+        display.drawString(0, 40, "from server");
+      }
+      else
+      {
+        display.drawString(0, 20, "Unknown Error");
+      }
+      display.display();
       delay(3);
     }
+
+    display.clear();
     while (1)
     {
       if (level < 0)
       {
+        level = 0;
         break;
       }
       ledcWrite(code, level);
       level--;
+      display.drawString(0, 0, "Error code");
+      display.drawString(80, 0, (String)code);
+      display.display();
       delay(3);
     }
-    if (code == 0)
+    display.clear();
+
+    if (lap >= 5)
     {
-      break;
+      display.setFont(ArialMT_Plain_16);
+      display.drawString(0, 0, "Retrying");
+      display.display();
+      for (int i = 60; i <= 90; i = i + 5)
+      {
+        display.drawString(i, 0, ".");
+        display.display();
+        delay(500);
+      }
+      ESP.restart(); // Reboot ESP32
     }
   }
 }
