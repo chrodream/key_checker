@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name Key_checker-rescue)(type Legacy)(uri ${KIPRJMOD}/Key_checker-rescue.lib)(options "")(descr ""))
+  (lib (name adafruit)(type Legacy)(uri ${KIPRJMOD}/adafruit.lib)(options "")(descr ""))
+)
