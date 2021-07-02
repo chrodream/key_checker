@@ -1,29 +1,34 @@
-# 関数を紐づけたボタンを配置
-#--------------------------
-
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+import sys
 import tkinter
+import time
+import threading
+
+#
+# GUI設定
+#
+flg = 0
 root = tkinter.Tk()
-root.title('demo_Tkinter')
-root.geometry("400x400")
+root.title("tkinterのCanvasを使ってみる")
+root.geometry("1920x1080")
 
-# コンソールに"Button is clicked."を出力する関数
-def second_floor():
-    print("Changing display to 2F...")
-    canvas.delete('all')
-    button = tkinter.Button(root, text="1F", command=first_floor)
-    button.grid()
+#キャンバスエリア
+canvas = tkinter.Canvas(root, width = 1920, height = 1080)#Canvasの作成
+background = canvas.create_rectangle(-1, -1, 1920, 1080, fill = '#000000', outline = '#000000')
 
-def first_floor():
-    print("Changing display to 1F...")
-    canvas.delete('all')
-    button = tkinter.Button(root, text="2F", command=second_floor)
-    button.grid()
-
-# ボタンの作成（text=ボタンに表示されるテキスト, command=押下時に呼び出す関数）
-button = tkinter.Button(root, text="2F", command=second_floor)
+#表作成
+for i in range(7):
+    r101_bg = canvas.create_rectangle(i * 50, 100, i * 50 + 40, 200, fill = '#FFFFFF', outline = '#000000')
+    r101 = canvas.create_text(70, i * 100, text = "101", fill = '#FFFF00', font = ('', 24), justify = "left")
 
 
-# ボタンの表示
-button.grid()
 
+#キャンバスバインド
+canvas.place(x=0, y=0)#Canvasの配置
+
+
+#
+# GUIの末端
+#
 root.mainloop()

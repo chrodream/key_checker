@@ -11,35 +11,36 @@ import pprint
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from http import HTTPStatus
-import tkinter
+import tkinter as tk
+from tkinter import ttk
 PORT = 2001
 
-room_stat = [[101, 0, 0],
-            [102, 0, 0],
-            [103, 0, 0],
-            [104, 0, 0],
-            [105, 0, 0],
-            [106, 0, 0],
-            [107, 0, 0],
-            [108, 0, 0],
-            [109, 0, 0],
-            [110, 0, 0],
-            [111, 0, 0],
-            [201, 0, 0],
-            [201, 0, 0],
-            [202, 0, 0],
-            [203, 0, 0],
-            [204, 0, 0],
-            [205, 0, 0],
-            [206, 0, 0],
-            [207, 0, 0],
-            [208, 0, 0],
-            [209, 0, 0],
-            [210, 0, 0],
-            [211, 0, 0],
-            [212, 0, 0],
-            [214, 0, 0],]
-
+room_stat = [
+            ["101", "0", "0"],
+            ["102", "0", "0"],
+            ["103", "0", "0"],
+            ["104", "0", "0"],
+            ["105", "0", "0"],
+            ["106", "0", "0"],
+            ["107", "0", "0"],
+            ["108", "0", "0"],
+            ["109", "0", "0"],
+            ["110", "0", "0"],
+            ["111", "0", "0"],
+            ["201", "0", "0"],
+            ["202", "0", "0"],
+            ["203", "0", "0"],
+            ["204", "0", "0"],
+            ["205", "0", "0"],
+            ["206", "0", "0"],
+            ["207", "0", "0"],
+            ["208", "0", "0"],
+            ["209", "0", "0"],
+            ["210", "0", "0"],
+            ["211", "0", "0"],
+            ["212", "0", "0"],
+            ["214", "0", "0"],
+            ]
 
 class StubHttpRequestHandler(BaseHTTPRequestHandler):
     server_version = "HTTP Stub/0.1"
@@ -115,15 +116,12 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
             if roomnum[0] == room_stat[i][0]:
                 room_stat[i][1] = keystat[0]
                 room_stat[i][2] = lightstat[0]
+                break
 
-        with open('./roomlog.csv', 'a') as f:
-            writer = csv.writer(f)
-            writer.writerow([dt_now.year, dt_now.month,
-                             dt_now.day, dt_now.hour, dt_now.minute, roomnum[0], keystat[0], lightstat[0]])
-
+        #with open('./roomlog_' + str(dt_now.year) + '_' + str(dt_now.month) + '_' + str(dt_now.day) + '.csv', 'a') as f:
+        #    writer = csv.writer(f)
+        #    writer.writerow([dt_now.hour, dt_now.minute, roomnum[0], keystat[0], lightstat[0]])
         print("======================================================================")
-        for i in range(len(room_stat)):
-            print(str(room_stat[i][0]) + "  " + str(room_stat[i][1]) + "  " + str(room_stat[i][2]))
 
 
 handler = StubHttpRequestHandler
