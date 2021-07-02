@@ -90,23 +90,30 @@ void loop()
   //Check Key status and Light status
   for (int loop_count = 0; loop_count < 100; loop_count++)
   {
-    if (digitalRead(key_switch) == HIGH)
-    {
-      key_stat = "1";
-      display.setFont(ArialMT_Plain_16);
-      display.drawString(0, 45, "Key");
-    }
-    else
+    display.clear();
+    display.setFont(ArialMT_Plain_16);
+    if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == HIGH)
     {
       key_stat = "0";
-      display.clear();
-    }
-    if (digitalRead(photo_tr) == HIGH)
-    {
       light_stat = "1";
+      display.drawString(0, 45, "Key");
+      display.drawString(64, 45, "Light");
+    }
+    else if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == LOW)
+    {
+      key_stat = "0";
+      light_stat = "0";
+      display.drawString(0, 45, "Key");
+    }
+    else if (digitalRead(key_switch) == LOW && digitalRead(photo_tr) == HIGH)
+    {
+      key_stat = "1";
+      light_stat = "1";
+      display.drawString(64, 45, "Light");
     }
     else
     {
+      key_stat = "1";
       light_stat = "0";
     }
 
