@@ -7,8 +7,8 @@
 #include "SSD1306.h"
 
 // Configuration
-const char ssid[] = "Your SSID"; // SSID
-const char pass[] = "Your Password";   // Password
+const char ssid[] = "Your SSID";     // SSID
+const char pass[] = "Your Password"; // Password
 const char serverName[] = "http://192.168.0.100:2001/";
 static const int room_number = 123;
 
@@ -92,20 +92,20 @@ void loop()
   {
     display.clear();
     display.setFont(ArialMT_Plain_16);
-    if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == HIGH)
+    if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == LOW)
     {
       key_stat = "0";
       light_stat = "1";
       display.drawString(0, 45, "Key");
       display.drawString(64, 45, "Light");
     }
-    else if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == LOW)
+    else if (digitalRead(key_switch) == HIGH && digitalRead(photo_tr) == HIGH)
     {
       key_stat = "0";
       light_stat = "0";
       display.drawString(0, 45, "Key");
     }
-    else if (digitalRead(key_switch) == LOW && digitalRead(photo_tr) == HIGH)
+    else if (digitalRead(key_switch) == LOW && digitalRead(photo_tr) == LOW)
     {
       key_stat = "1";
       light_stat = "1";

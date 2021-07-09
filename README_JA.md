@@ -46,7 +46,7 @@
 1. Raspberry Piでkey_server.pyをPython3で起動させます。
    例: `python3 ~/key_checker/key_server.py`
 2. client_esp.inoをESP32に書き込んでください。
-   このときWi-FiのSSID, パスワード, 部屋番号を書き換えてください。
+   **注意: このときWi-FiのSSID, パスワード, 部屋番号を書き換えてください。**
 3. ESP32を電源に接続すれば自動的に接続され、10秒ごとに状態が更新されます。
 
 

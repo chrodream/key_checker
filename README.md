@@ -2,15 +2,15 @@
 
 ## Overview
 
-・Know the lock status of each room by HTTP communication between the primary device(Raspberry Pi) and the secondary device(ESP32).
-・See in the log when the door was locked ro unlocked.
+​	・Know the lock status of each room by HTTP communication between the primary device(Raspberry Pi) and the secondary device(ESP32).
+​	・See in the log when the door was locked or unlocked.
 
 
 
 ## Environment
 
-・Raspberry Pi
-・ESP32 DevkitC 32D/E
+​	・Raspberry Pi
+​	・ESP32 Devkit-C 32D/E
 
 
 
@@ -18,10 +18,10 @@
 
 ### Primary (Raspberry Pi)
 
-| Products                                          | Quantity |
-| ------------------------------------------------- | -------- |
-| Raspberry Pi                                      | 1        |
-| micro SDカード(Limit to 32GB if you use 32bit OS) | 1        |
+| Products                                         | Quantity |
+| ------------------------------------------------ | -------- |
+| Raspberry Pi                                     | 1        |
+| micro SD Card(Limit to 32GB if you use 32bit OS) | 1        |
 
 ### Secondary (ESP32)
 
@@ -46,7 +46,7 @@
 1. Launch key_server.py on Raspberry Pi 
    e.g. `python3 ~/key_checker/key_server.py`
 2. upload client_esp.ino to ESP32.
-   Please change Wi-Fi's SSID, Password and Room number.
+   **Notice: Please change Wi-Fi's SSID, Password and Room number.**
 3. Sends a HTTP data per 10 seconds when ESP is connected to Power supply.
 
 
@@ -55,6 +55,6 @@
 
 | Error Code      | Response method                                              |
 | --------------- | ------------------------------------------------------------ |
-| -1              | Maybe IP address is wrong on Raspberry Pi. Please check IP address, Subnet mask, DNS and Home Gate Way's address are correct. |
+| -1              | Maybe Network configuration is wrong. Please check IP-address, Subnet mask, DNS and Home Gate Way's address are correct. |
 | -11             | Please do not launch on SSH.                                 |
 | 3-digits number | It's HTTP response code.                                     |
