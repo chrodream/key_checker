@@ -218,7 +218,7 @@ U 1 1 60DCFADD
 P 4050 2300
 F 0 "U2" H 4278 2313 50  0000 L CNN
 F 1 "SSD1306" H 4278 2222 50  0000 L CNN
-F 2 "Connector_PinHeader_1.27mm:PinHeader_1x04_P1.27mm_Vertical" H 4050 2550 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 4050 2550 50  0001 C CNN
 F 3 "" H 4050 2550 50  0001 C CNN
 	1    4050 2300
 	1    0    0    -1  
