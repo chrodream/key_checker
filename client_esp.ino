@@ -7,10 +7,10 @@
 #include "SSD1306.h"
 
 // Configuration
-const char ssid[] = "WARPSTAR-A358DF"; // SSID
-const char pass[] = "9F60114A033FA";   // Password
+const char ssid[] = "Your SSID"; // SSID
+const char pass[] = "Your Password";   // Password
 const char serverName[] = "http://192.168.0.100:2001/";
-static const int room_number = 108;
+static const int room_number = 123;
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 0;
