@@ -5,6 +5,7 @@ import sys
 import urllib.parse
 import html
 import re
+import time
 import datetime
 import csv
 import pprint
@@ -13,8 +14,30 @@ from http.server import HTTPServer
 from http import HTTPStatus
 import tkinter as tk
 from tkinter import ttk
+import socket
+import netifaces as ni
+import psutil
 
 PORT = 2001
+
+# Check IP address
+if os.name == "nt":
+    # Windows
+    ip = socket.gethostbyname_ex(socket.gethostname())[2]
+    pass
+else:
+    # Linux, Mac
+    result = []
+    address_list = psutil.net_if_addrs()
+    for nic in address_list.keys():
+        ni.ifaddresses(nic)
+        try:
+            ip = ni.ifaddresses(nic)[ni.AF_INET][0]["addr"]
+            if ip not in ["127.0.0.1"]:
+                result.append(ip)
+        except KeyError as err:
+            pass
+    ip = result[0]
 
 room_stat = [
     ["101", "0", "0"],
@@ -42,6 +65,12 @@ room_stat = [
     ["212", "0", "0"],
     ["214", "0", "0"],
 ]
+
+print("======================================================================")
+print("Key Checker v0.9.1-beta (work on " + os.name + ")")
+print("Currently IP address: " + ip)
+print("======================================================================")
+print("Waiting data from clients...")
 
 
 class StubHttpRequestHandler(BaseHTTPRequestHandler):
@@ -82,7 +111,6 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         print("======================================================================")
         enc = sys.getfilesystemencoding()
-
         length = self.headers.get("content-length")
         nbytes = int(length)
         rawPostData = self.rfile.read(nbytes)
