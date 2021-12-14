@@ -12,13 +12,14 @@ import pprint
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from http import HTTPStatus
-import tkinter as tk
-from tkinter import ttk
+#import tkinter as tk
+#from tkinter import ttk
 import socket
 import netifaces as ni
 import psutil
 
 PORT = 2001
+m5resend = 999
 
 # Check IP address
 if os.name == "nt":
@@ -132,39 +133,45 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(encoded)
-        print("POST data from " + roomnum[0])
-        if keystat[0] == "1":
-            print("Key  : Locked")
+
+        if roomnum[0] == m5resend:
+            print("data from M5Paper.")
+
         else:
-            print("Key  : Unlocked")
+            print("POST data from " + roomnum[0])
+            if keystat[0] == "1":
+                print("Key  : Locked")
+            else:
+                print("Key  : Unlocked")
 
-        if lightstat[0] == "1":
-            print("Light: ON")
-        else:
-            print("Light: OFF")
+            if lightstat[0] == "1":
+                print("Light: ON")
+            else:
+                print("Light: OFF")
 
-        dt_now = datetime.datetime.now()
+            dt_now = datetime.datetime.now()
 
-        for i in range(len(room_stat)):
-            if roomnum[0] == room_stat[i][0]:
-                room_stat[i][1] = keystat[0]
-                room_stat[i][2] = lightstat[0]
-                break
+            for i in range(len(room_stat)):
+                if roomnum[0] == room_stat[i][0]:
+                    room_stat[i][1] = keystat[0]
+                    room_stat[i][2] = lightstat[0]
+                    break
 
-        with open(
-            "./roomlog_"
-            + str(dt_now.year)
-            + "_"
-            + str(dt_now.month)
-            + "_"
-            + str(dt_now.day)
-            + ".csv",
-            "a",
-        ) as f:
-            writer = csv.writer(f)
-            writer.writerow(
-                [dt_now.hour, dt_now.minute, roomnum[0], keystat[0], lightstat[0]]
-            )
+            with open(
+                "./roomlog_"
+                + str(dt_now.year)
+                + "_"
+                + str(dt_now.month)
+                + "_"
+                + str(dt_now.day)
+                + ".csv",
+                "a",
+            ) as f:
+                writer = csv.writer(f)
+                writer.writerow(
+                    [dt_now.hour, dt_now.minute, roomnum[0],
+                        keystat[0], lightstat[0]]
+                )
         print("======================================================================")
 
 
