@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+from http import server
 import os
-from ssl import OPENSSL_VERSION_NUMBER
+from ssl import OPENSSL_VERSION_NUMBER, SOCK_STREAM
 import sys
 import urllib.parse
 import html
@@ -20,6 +21,8 @@ import psutil
 
 PORT = 2001
 m5resend = 999
+listen_num = 5
+buffer_size = 1024
 
 # Check IP address
 if os.name == "nt":
@@ -41,7 +44,7 @@ else:
     ip = result[0]
 
 room_stat = [
-    ["101", "0", "0"],
+    ["101", "0", "1"],
     ["102", "0", "0"],
     ["103", "0", "0"],
     ["104", "0", "0"],
@@ -49,9 +52,9 @@ room_stat = [
     ["106", "0", "0"],
     ["107", "0", "0"],
     ["108", "0", "0"],
-    ["109", "0", "0"],
-    ["110", "0", "0"],
-    ["111", "0", "0"],
+    ["109", "0", "1"],
+    ["110", "1", "0"],
+    ["111", "1", "1"],
     ["201", "0", "0"],
     ["202", "0", "0"],
     ["203", "0", "0"],
@@ -66,6 +69,11 @@ room_stat = [
     ["212", "0", "0"],
     ["214", "0", "0"],
 ]
+
+tcp_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# tcp_server.bind((ip, PORT))
+# tcp_server.listen(listen_num)
+
 
 print("======================================================================")
 print("Key Checker v0.9.1-beta (work on " + os.name + ")")
@@ -98,7 +106,23 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append("<body>\n<h1>%s</h1>" % title)
         r.append("<hr>\n<ul>")
         r.append("Key Checker is runnig now!")
-        r.append("</ul>\n<hr>\n</body>\n</html>\n")
+        r.append("</ul>\n<hr>\n")
+        r.append("<table>\n")
+        r.append("<tr><th>部屋番号</th><th>鍵</th><th>照明</th></tr>\n")
+        for count_room in range(24):
+            r.append("<tr><td>" + str(room_stat[count_room][0]) + "</td>")
+            if room_stat[count_room][1] == "0":
+                r.append("<td>" + "LOCK" + "</td>")
+            else:
+                r.append("<td>" + "UNLOCK" + "</td>")
+
+            if room_stat[count_room][2] == "0":
+                r.append("<td>" + "OFF" + "</td>")
+            else:
+                r.append("<td>" + "ON" + "</td>")
+
+        r.append("</table>\n")
+        r.append("</body>\n</html>\n")
         encoded = "\n".join(r).encode(enc, "surrogateescape")
 
         self.send_response(HTTPStatus.OK)
@@ -135,7 +159,9 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(encoded)
 
         if roomnum[0] == m5resend:
-            print("data from M5Paper.")
+            print("data from M5.")
+            client, address = tcp_server.accept()
+            print("[*] Connected!! [ Source : {}]".format(address))
 
         else:
             print("POST data from " + roomnum[0])
