@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
 from http import server
-import os
-from ssl import OPENSSL_VERSION_NUMBER, SOCK_STREAM
-import sys
-import urllib.parse
-import html
-import re
-import time
-import datetime
-import csv
-import pprint
+from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
-from http import HTTPStatus
-#import tkinter as tk
-#from tkinter import ttk
-import socket
+from ssl import OPENSSL_VERSION_NUMBER, SOCK_STREAM
+import csv
+import datetime as dt
+import html
 import netifaces as ni
+import os
+import pprint
 import psutil
+import re
+import socket
+import sys
+import time
+import urllib.parse
 
 PORT = 2001
 m5resend = 999
@@ -25,9 +23,10 @@ listen_num = 5
 buffer_size = 1024
 
 # Check IP address
-if os.name == "nt":
+if os.name == 'nt':
     # Windows
     ip = socket.gethostbyname_ex(socket.gethostname())[2]
+    os.system('cls')
     pass
 else:
     # Linux, Mac
@@ -36,38 +35,40 @@ else:
     for nic in address_list.keys():
         ni.ifaddresses(nic)
         try:
-            ip = ni.ifaddresses(nic)[ni.AF_INET][0]["addr"]
-            if ip not in ["127.0.0.1"]:
+            ip = ni.ifaddresses(nic)[ni.AF_INET][0]['addr']
+            if ip not in ['127.0.0.1']:
                 result.append(ip)
         except KeyError as err:
             pass
+    os.system('clear')
     ip = result[0]
 
+# Rooms status
 room_stat = [
-    ["101", "0", "1"],
-    ["102", "0", "0"],
-    ["103", "0", "0"],
-    ["104", "0", "0"],
-    ["105", "0", "0"],
-    ["106", "0", "0"],
-    ["107", "0", "0"],
-    ["108", "0", "0"],
-    ["109", "0", "1"],
-    ["110", "1", "0"],
-    ["111", "1", "1"],
-    ["201", "0", "0"],
-    ["202", "0", "0"],
-    ["203", "0", "0"],
-    ["204", "0", "0"],
-    ["205", "0", "0"],
-    ["206", "0", "0"],
-    ["207", "0", "0"],
-    ["208", "0", "0"],
-    ["209", "0", "0"],
-    ["210", "0", "0"],
-    ["211", "0", "0"],
-    ["212", "0", "0"],
-    ["214", "0", "0"],
+    ['101', '1', '1'],
+    ['102', '1', '0'],
+    ['103', '1', '0'],
+    ['104', '1', '0'],
+    ['105', '1', '0'],
+    ['106', '1', '0'],
+    ['107', '1', '0'],
+    ['108', '1', '0'],
+    ['109', '1', '1'],
+    ['110', '1', '0'],
+    ['111', '1', '1'],
+    ['201', '1', '0'],
+    ['202', '1', '0'],
+    ['203', '1', '0'],
+    ['204', '1', '0'],
+    ['205', '1', '0'],
+    ['206', '1', '0'],
+    ['207', '1', '0'],
+    ['208', '1', '0'],
+    ['209', '1', '0'],
+    ['210', '1', '0'],
+    ['211', '1', '0'],
+    ['212', '0', '0'],
+    ['214', '0', '0'],
 ]
 
 tcp_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -75,107 +76,108 @@ tcp_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # tcp_server.listen(listen_num)
 
 
-print("======================================================================")
-print("Key Checker v0.9.1-beta (work on " + os.name + ")")
-print("Currently IP address: " + ip)
-print("======================================================================")
-print("Waiting data from clients...")
+print('======================================================================')
+print('Key Checker v0.9.2-beta (work on ' + os.name + ')')
+print('Currently IP address: ' + '\033[32m' + '\033[1m' + ip + '\033[0m')
+print('======================================================================')
+print('Waiting data from clients...')
+print('======================================================================')
 
 
 class StubHttpRequestHandler(BaseHTTPRequestHandler):
-    server_version = "HTTP Stub/0.1"
+    server_version = 'HTTP Stub/0.1'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def do_GET(self):
-        print("======================================================================")
         enc = sys.getfilesystemencoding()
-        title = "Key Checker"
+        title = 'Key Checker'
 
         r = []
+        r.append('<!DOCTYPE html>')
+        r.append('<html lang="en">\n<head>')
+        r.append('<meta charset="UTF-8">')
+        r.append('<meta http-equiv="refresh" content="60; URL=">')  # auto reload
         r.append(
-            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-            '"http://www.w3.org/TR/html4/strict.dtd">'
-        )
-        r.append("<html>\n<head>")
+            '<meta name="description" content="ネットワーク上から鍵がどこにあるか, 明かりがついているかがわかります。">')
+        r.append('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">')
+        r.append('<title>%s</title>\n</head>' % title)
         r.append(
-            '<meta http-equiv="Content-Type" ' 'content="text/html; charset=%s">' % enc
-        )
-        r.append("<title>%s</title>\n</head>" % title)
-        r.append("<body>\n<h1>%s</h1>" % title)
-        r.append("<hr>\n<ul>")
-        r.append("Key Checker is runnig now!")
-        r.append("</ul>\n<hr>\n")
-        r.append("<table>\n")
-        r.append("<tr><th>部屋番号</th><th>鍵</th><th>照明</th></tr>\n")
+            '<style type="text/css">body {\nfont-family:"Noto Sans JP", "monospace" \n}</style>')
+        r.append('<body>\n<h1>%s</h1>' % title)
+        r.append('<hr>\n<ul>')
+        r.append('Key Checker is runnig now!')
+        r.append('</ul>\n<hr>\n')
+        r.append('<table border="3">\n')
+        r.append('<tr><th>Room</th><th>Key</th><th>Light</th></tr>\n')
         for count_room in range(24):
-            r.append("<tr><td>" + str(room_stat[count_room][0]) + "</td>")
-            if room_stat[count_room][1] == "0":
-                r.append("<td>" + "LOCK" + "</td>")
+            r.append('<tr><td>' + str(room_stat[count_room][0]) + '</td>')
+            if room_stat[count_room][1] == '0':
+                r.append('<td>' + 'UNLOCK' + '</td>')
             else:
-                r.append("<td>" + "UNLOCK" + "</td>")
+                r.append('<td>' + 'LOCK🔒' + '</td>')
 
-            if room_stat[count_room][2] == "0":
-                r.append("<td>" + "OFF" + "</td>")
+            if room_stat[count_room][2] == '0':
+                r.append('<td>' + 'OFF' + '</td>')
             else:
-                r.append("<td>" + "ON" + "</td>")
+                r.append('<td>' + 'ON💡' + '</td>')
 
-        r.append("</table>\n")
-        r.append("</body>\n</html>\n")
-        encoded = "\n".join(r).encode(enc, "surrogateescape")
+        r.append('</table>\n')
+        r.append('</body>\n</html>\n')
+        encoded = '\n'.join(r).encode(enc, 'surrogateescape')
 
         self.send_response(HTTPStatus.OK)
-        self.send_header("Content-type", "text/html; charset=%s" % enc)
-        self.send_header("Content-Length", str(len(encoded)))
+        self.send_header('Content-type', 'text/html; charset=%s' % enc)
+        self.send_header('Content-Length', str(len(encoded)))
         self.end_headers()
         self.wfile.write(encoded)
 
-        print("======================================================================")
+        print('======================================================================')
 
     def do_POST(self):
-        print("======================================================================")
         enc = sys.getfilesystemencoding()
-        length = self.headers.get("content-length")
+        length = self.headers.get('content-length')
         nbytes = int(length)
         rawPostData = self.rfile.read(nbytes)
         decodedPostData = rawPostData.decode(enc)
         postData = urllib.parse.parse_qs(decodedPostData)
         print(decodedPostData)
-        pan = postData["room_num"]
-        roomnum = postData["room_num"]
-        keystat = postData["key_stat"]
-        lightstat = postData["light_stat"]
+        pan = postData['room_num']
+        roomnum = postData['room_num']
+        keystat = postData['key_stat']
+        lightstat = postData['light_stat']
+        # checkdigit = postData['check_digit']
         print(postData.items)
         resultData = []
         resultData.append(pan[0])
 
-        encoded = "\n".join(resultData).encode(enc)
+        encoded = '\n'.join(resultData).encode(enc)
         self.send_response(HTTPStatus.OK)
-        self.send_header("Content-type", "text/plain; charset=%s" % enc)
-        self.send_header("Content-Length", str(len(encoded)))
+        self.send_header('Content-type', 'text/plain; charset=%s' % enc)
+        self.send_header('Content-Length', str(len(encoded)))
         self.end_headers()
 
         self.wfile.write(encoded)
 
         if roomnum[0] == m5resend:
-            print("data from M5.")
+            print('data from M5.')
             client, address = tcp_server.accept()
-            print("[*] Connected!! [ Source : {}]".format(address))
+            print('[*] Connected!! [ Source : {}]'.format(address))
 
         else:
-            print("POST data from " + roomnum[0])
-            if keystat[0] == "1":
-                print("Key  : Locked")
+            print('POST data from ' + '\033[32m' + '\033[1m' + roomnum[0] + '\033[0m')
+            if keystat[0] == '0':
+                print('Key  : Unlocked')
             else:
-                print("Key  : Unlocked")
+                print('Key  : Locked')
 
-            if lightstat[0] == "1":
-                print("Light: ON")
+            if lightstat[0] == '0':
+                print('Light: OFF')
             else:
-                print("Light: OFF")
+                print('Light: ON')
 
-            dt_now = datetime.datetime.now()
+            dt_now = dt.dt.now()
 
             for i in range(len(room_stat)):
                 if roomnum[0] == room_stat[i][0]:
@@ -184,23 +186,34 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
                     break
 
             with open(
-                "./roomlog_"
+                './roomlog_'
                 + str(dt_now.year)
-                + "_"
+                + '_'
                 + str(dt_now.month)
-                + "_"
+                + '_'
                 + str(dt_now.day)
-                + ".csv",
-                "a",
+                + '.csv',
+                'a',
             ) as f:
                 writer = csv.writer(f)
                 writer.writerow(
                     [dt_now.hour, dt_now.minute, roomnum[0],
                         keystat[0], lightstat[0]]
                 )
-        print("======================================================================")
+        print('======================================================================')
 
 
-handler = StubHttpRequestHandler
-httpd = HTTPServer(("", PORT), handler)
-httpd.serve_forever()
+try:
+    handler = StubHttpRequestHandler
+    httpd = HTTPServer(('', PORT), handler)
+    httpd.serve_forever()
+
+except KeyboardInterrupt:
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+    print('======================================================================')
+    print('Keyboard interrupt detected.')
+    print('Exiting Key Checker......')
+    print('======================================================================')
