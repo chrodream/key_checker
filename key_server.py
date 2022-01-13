@@ -77,7 +77,7 @@ tcp_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 print('======================================================================')
-print('Key Checker v0.9.2-beta (work on ' + os.name + ')')
+print('Key Checker v1.0 (work on ' + os.name + ')')
 print('Currently IP address: ' + '\033[32m' + '\033[1m' + ip + '\033[0m')
 print('======================================================================')
 print('Waiting data from clients...')
@@ -99,7 +99,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<!DOCTYPE html>')
         r.append('<html lang="en">\n<head>')
         r.append('<meta charset="UTF-8">')
-        r.append('<meta http-equiv="refresh" content="60; URL=">')  # auto reload
+        r.append('<meta http-equiv="refresh" content="60"; URL=">')  # auto reload
         r.append(
             '<meta name="description" content="ネットワーク上から鍵がどこにあるか, 明かりがついているかがわかります。">')
         r.append('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">')
@@ -151,8 +151,9 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         roomnum = postData['room_num']
         keystat = postData['key_stat']
         lightstat = postData['light_stat']
-        # checkdigit = postData['check_digit']
-        print(postData.items)
+        chk_sum = postData['check_sum']
+        # print(chk_sum[0])
+        # print(postData.items)
         resultData = []
         resultData.append(pan[0])
 
@@ -164,46 +165,50 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(encoded)
 
-        if roomnum[0] == m5resend:
-            print('data from M5.')
-            client, address = tcp_server.accept()
-            print('[*] Connected!! [ Source : {}]'.format(address))
+        if int(chk_sum[0]) != (int(roomnum[0]) * 7) + (int(keystat[0]) * 5) + (int(lightstat[0]) * 3):
+            print('\033[31m\033[1mArguments Error!\033[0m')
 
         else:
-            print('POST data from ' + '\033[32m' + '\033[1m' + roomnum[0] + '\033[0m')
-            if keystat[0] == '0':
-                print('Key  : Unlocked')
+            if roomnum[0] == m5resend:
+                print('data from M5.')
+                client, address = tcp_server.accept()
+                print('[*] Connected!! [ Source : {}]'.format(address))
+
             else:
-                print('Key  : Locked')
+                print('POST data from ' + '\033[32m' + '\033[1m' + roomnum[0] + '\033[0m')
+                if keystat[0] == '0':
+                    print('Key  : Unlocked')
+                else:
+                    print('Key  : Locked')
 
-            if lightstat[0] == '0':
-                print('Light: OFF')
-            else:
-                print('Light: ON')
+                if lightstat[0] == '0':
+                    print('Light: OFF')
+                else:
+                    print('Light: ON')
 
-            dt_now_post = dt.datetime.now()
+                dt_now_post = dt.datetime.now()
 
-            for i in range(len(room_stat)):
-                if roomnum[0] == room_stat[i][0]:
-                    room_stat[i][1] = keystat[0]
-                    room_stat[i][2] = lightstat[0]
-                    break
+                for i in range(len(room_stat)):
+                    if roomnum[0] == room_stat[i][0]:
+                        room_stat[i][1] = keystat[0]
+                        room_stat[i][2] = lightstat[0]
+                        break
 
-            with open(
-                './roomlog_'
-                + str(dt_now_post.year)
-                + '_'
-                + str(dt_now_post.month)
-                + '_'
-                + str(dt_now_post.day)
-                + '.csv',
-                'a',
-            ) as f:
-                writer = csv.writer(f)
-                writer.writerow(
-                    [dt_now_post.hour, dt_now_post.minute, roomnum[0],
-                        keystat[0], lightstat[0]]
-                )
+                with open(
+                    './roomlog_'
+                    + str(dt_now_post.year)
+                    + '_'
+                    + str(dt_now_post.month)
+                    + '_'
+                    + str(dt_now_post.day)
+                    + '.csv',
+                    'a',
+                ) as f:
+                    writer = csv.writer(f)
+                    writer.writerow(
+                        [dt_now_post.hour, dt_now_post.minute, roomnum[0],
+                            keystat[0], lightstat[0]]
+                    )
         print('======================================================================')
 
 
