@@ -93,7 +93,8 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         enc = sys.getfilesystemencoding()
         title = 'Key Checker'
-
+        dt_now_get = dt.datetime.now()
+        now_time = str(dt_now_get.year) + "-" + str(dt_now_get.month) + "-" + str(dt_now_get.day) + " " + str(dt_now_get.hour) + ":" + str(dt_now_get.minute)
         r = []
         r.append('<!DOCTYPE html>')
         r.append('<html lang="en">\n<head>')
@@ -108,6 +109,9 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<body>\n<h1>%s</h1>' % title)
         r.append('<hr>\n<ul>')
         r.append('Key Checker is runnig now!')
+        r.append('</ul>\n<ul>')
+
+        r.append('Update time: %s' % now_time)
         r.append('</ul>\n<hr>\n')
         r.append('<table border="3">\n')
         r.append('<tr><th>Room</th><th>Key</th><th>Light</th></tr>\n')
@@ -177,7 +181,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
             else:
                 print('Light: ON')
 
-            dt_now = dt.dt.now()
+            dt_now_post = dt.datetime.now()
 
             for i in range(len(room_stat)):
                 if roomnum[0] == room_stat[i][0]:
@@ -187,17 +191,17 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
 
             with open(
                 './roomlog_'
-                + str(dt_now.year)
+                + str(dt_now_post.year)
                 + '_'
-                + str(dt_now.month)
+                + str(dt_now_post.month)
                 + '_'
-                + str(dt_now.day)
+                + str(dt_now_post.day)
                 + '.csv',
                 'a',
             ) as f:
                 writer = csv.writer(f)
                 writer.writerow(
-                    [dt_now.hour, dt_now.minute, roomnum[0],
+                    [dt_now_post.hour, dt_now_post.minute, roomnum[0],
                         keystat[0], lightstat[0]]
                 )
         print('======================================================================')
