@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from calendar import c
 from http import server
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
@@ -94,12 +95,14 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         enc = sys.getfilesystemencoding()
         title = 'Key Checker'
         dt_now_get = dt.datetime.now()
-        now_time = str(dt_now_get.year) + "-" + str(dt_now_get.month) + "-" + str(dt_now_get.day) + " " + str(dt_now_get.hour) + ":" + str(dt_now_get.minute)
+        now_time = str(dt_now_get.year) + "-" + str(dt_now_get.month) + "-" + str(
+            dt_now_get.day) + " " + str(dt_now_get.hour) + ":" + str(dt_now_get.minute)
         r = []
         r.append('<!DOCTYPE html>')
         r.append('<html lang="en">\n<head>')
         r.append('<meta charset="UTF-8">')
-        r.append('<meta http-equiv="refresh" content="60"; URL=">')  # auto reload
+        # auto reload
+        r.append('<meta http-equiv="refresh" content="60"; URL=">')
         r.append(
             '<meta name="description" content="ネットワーク上から鍵がどこにあるか, 明かりがついているかがわかります。">')
         r.append('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">')
@@ -116,16 +119,24 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<table border="3">\n')
         r.append('<tr><th>Room</th><th>Key</th><th>Light</th></tr>\n')
         for count_room in range(24):
-            r.append('<tr><td>' + str(room_stat[count_room][0]) + '</td>')
-            if room_stat[count_room][1] == '0':
-                r.append('<td>' + 'UNLOCK' + '</td>')
+            if room_stat[count_room][1] == '1' and room_stat[count_room][2] == '1':
+                print(room_stat[count_room][0])
+                r.append('<tr><td><font color="orange">' + str(room_stat[count_room][0]) + '</font></td>')
+                r.append('<td><font color="orange">' + 'LOCK🔒' + '</font></td>')
+                r.append('<td><font color="orange">' + 'ON💡' + '</font></td>')
+                r.append('</tr></font>')
+            
             else:
-                r.append('<td>' + 'LOCK🔒' + '</td>')
+                r.append('<tr><td>' + str(room_stat[count_room][0]) + '</td>')
+                if room_stat[count_room][1] == '0':
+                    r.append('<td>' + 'UNLOCK' + '</td>')
+                else:
+                    r.append('<td>' + 'LOCK🔒' + '</td>')
 
-            if room_stat[count_room][2] == '0':
-                r.append('<td>' + 'OFF' + '</td>')
-            else:
-                r.append('<td>' + 'ON💡' + '</td>')
+                if room_stat[count_room][2] == '0':
+                    r.append('<td>' + 'OFF' + '</td>')
+                else:
+                    r.append('<td>' + 'ON💡' + '</td></tr>')
 
         r.append('</table>\n')
         r.append('</body>\n</html>\n')
