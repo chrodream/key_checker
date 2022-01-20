@@ -7,10 +7,10 @@
 #include "SSD1306.h"
 
 // Configuration
-const char ssid[] = "Your SSID";     // SSID
-const char pass[] = "Your Password"; // Password
+const char ssid[] = "SSID";  // SSID
+const char pass[] = "Pass" // Password
 const char serverName[] = "http://192.168.0.100:2001/";
-static const int room_number = 123;
+static const int room_number = 205;
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 0;
@@ -85,9 +85,11 @@ void setup()
 
 void loop()
 {
+  int check_sum = room_number * 7;
   std::string key_stat;
   std::string light_stat;
-  //Check Key status and Light status
+
+  // Check Key status and Light status
   for (int loop_count = 0; loop_count < 100; loop_count++)
   {
     display.clear();
@@ -126,15 +128,31 @@ void loop()
     display.display();
     delay(100);
   }
+  // check status for checksum
+  if (key_stat == "1")
+  {
+    check_sum += 5;
+  }
+  if (light_stat == "1")
+  {
+    check_sum += 3;
+  }
+  // check_sum %= 100;
+
   // make send text
   std::ostringstream room_number_ostring;
+  std::ostringstream check_digit_ostring;
   room_number_ostring << room_number;
+  check_digit_ostring << check_sum;
   std::string send_std_string = "room_num=";
   send_std_string.append(room_number_ostring.str());
   send_std_string.append("&key_stat=");
   send_std_string.append(key_stat);
   send_std_string.append("&light_stat=");
   send_std_string.append(light_stat);
+  send_std_string.append("&check_sum=");
+  send_std_string.append(check_digit_ostring.str());
+
   // convert from std::string to char arry
   int send_std_string_count = send_std_string.length();
   char sendtext[send_std_string_count + 1];
@@ -146,16 +164,16 @@ void loop()
   {
     HTTPClient http;
 
-    http.begin(serverName);                                              //Specify destination for HTTP request
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); //Specify content-type header
+    http.begin(serverName);                                              // Specify destination for HTTP request
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Specify content-type header
 
-    int httpResponseCode = http.POST(sendtext); //Send the actual POST request
+    int httpResponseCode = http.POST(sendtext); // Send the actual POST request
 
     if (httpResponseCode > 0)
     {
-      String response = http.getString(); //Get the response to the request
-      Serial.println(httpResponseCode);   //Print return code
-      Serial.println(response);           //Print request answer
+      String response = http.getString(); // Get the response to the request
+      Serial.println(httpResponseCode);   // Print return code
+      Serial.println(response);           // Print request answer
       if (httpResponseCode >= 100 && httpResponseCode <= 299)
       {
         digitalWrite(blue_led, HIGH);
@@ -173,7 +191,7 @@ void loop()
       Serial.println(httpResponseCode);
       error(httpResponseCode);
     }
-    http.end(); //Free resources
+    http.end(); // Free resources
   }
   else
   {

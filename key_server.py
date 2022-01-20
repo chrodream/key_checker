@@ -46,7 +46,7 @@ else:
 
 # Rooms status
 room_stat = [
-    ['101', '1', '1'],
+    ['101', '1', '0'],
     ['102', '1', '0'],
     ['103', '1', '0'],
     ['104', '1', '0'],
@@ -54,9 +54,9 @@ room_stat = [
     ['106', '1', '0'],
     ['107', '1', '0'],
     ['108', '1', '0'],
-    ['109', '1', '1'],
+    ['109', '1', '0'],
     ['110', '1', '0'],
-    ['111', '1', '1'],
+    ['111', '1', '0'],
     ['201', '1', '0'],
     ['202', '1', '0'],
     ['203', '1', '0'],
@@ -68,8 +68,8 @@ room_stat = [
     ['209', '1', '0'],
     ['210', '1', '0'],
     ['211', '1', '0'],
-    ['212', '0', '0'],
-    ['214', '0', '0'],
+    ['212', '1', '0'],
+    ['214', '1', '0'],
 ]
 
 tcp_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -120,7 +120,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<tr><th>Room</th><th>Key</th><th>Light</th></tr>\n')
         for count_room in range(24):
             if room_stat[count_room][1] == '1' and room_stat[count_room][2] == '1':
-                print(room_stat[count_room][0])
+                # print(room_stat[count_room][0])
                 r.append('<tr><td><font color="orange">' + str(room_stat[count_room][0]) + '</font></td>')
                 r.append('<td><font color="orange">' + 'LOCK🔒' + '</font></td>')
                 r.append('<td><font color="orange">' + 'ON💡' + '</font></td>')
@@ -186,16 +186,16 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
                 print('[*] Connected!! [ Source : {}]'.format(address))
 
             else:
-                print('POST data from ' + '\033[32m' + '\033[1m' + roomnum[0] + '\033[0m')
+                print('POST data from ' + '\033[32m\033[1m' + roomnum[0] + '\033[0m')
                 if keystat[0] == '0':
-                    print('Key  : Unlocked')
+                    print('Key  : \033[32m\033[1mUnlocked\033[0m')
                 else:
-                    print('Key  : Locked')
+                    print('Key  : \033[32m\033[1mLocked\033[0m')
 
                 if lightstat[0] == '0':
-                    print('Light: OFF')
+                    print('Light: \033[32m\033[1mOFF\033[0m')
                 else:
-                    print('Light: ON')
+                    print('Light: \033[32m\033[1mON\033[0m')
 
                 dt_now_post = dt.datetime.now()
 
