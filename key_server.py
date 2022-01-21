@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from calendar import c
 from http import server
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
@@ -102,7 +101,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
         r.append('<html lang="en">\n<head>')
         r.append('<meta charset="UTF-8">')
         # auto reload
-        r.append('<meta http-equiv="refresh" content="60"; URL=">')
+        r.append('<meta http-equiv="refresh" content="60; URL=">')
         r.append(
             '<meta name="description" content="ネットワーク上から鍵がどこにあるか, 明かりがついているかがわかります。">')
         r.append('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">')
@@ -111,7 +110,7 @@ class StubHttpRequestHandler(BaseHTTPRequestHandler):
             '<style type="text/css">body {\nfont-family:"Noto Sans JP", "monospace" \n}</style>')
         r.append('<body>\n<h1>%s</h1>' % title)
         r.append('<hr>\n<ul>')
-        r.append('Key Checker is runnig now!')
+        r.append('Key Checker is running now!')
         r.append('</ul>\n<ul>')
 
         r.append('Update time: %s' % now_time)

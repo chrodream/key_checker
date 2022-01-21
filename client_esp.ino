@@ -8,7 +8,7 @@
 
 // Configuration
 const char ssid[] = "SSID";  // SSID
-const char pass[] = "Pass" // Password
+const char pass[] = "Pass"; // Password
 const char serverName[] = "http://192.168.0.100:2001/";
 static const int room_number = 205;
 
